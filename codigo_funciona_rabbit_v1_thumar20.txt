@@ -1,0 +1,32 @@
+// Get the payload from the incoming item.
+// In n8n, you can access the JSON via $input.item.json
+const rawPayload = $input.item.json.payload;
+
+// Ensure we have an array.
+// If rawPayload is a string, try to parse it.
+// Otherwise, if it’s already an array, use it directly.
+let itemsArray;
+if (typeof rawPayload === 'string') {
+  try {
+    itemsArray = JSON.parse(rawPayload);
+  } catch (e) {
+    throw new Error("Failed to parse payload string: " + e);
+  }
+} else if (Array.isArray(rawPayload)) {
+  itemsArray = rawPayload;
+} else {
+  // If it's a single object, wrap it in an array.
+  itemsArray = [rawPayload];
+}
+
+// For this example, we'll filter items whose notif_info.tipo_objeto is "stock".
+// (Originally, your Python code filtered for "comprobantes" but your sample payload shows "stock".)
+const filteredItems = itemsArray.filter(item => {
+  return item.notif_info && item.notif_info.tipo_objeto === "stock";
+});
+
+// Add the filtered array as a new field in the output JSON.
+$input.item.json.filteredItems = filteredItems;
+
+// Return the updated item.
+return $input.item;

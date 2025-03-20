@@ -1,0 +1,33 @@
+// Get the payload from the incoming JSON (it may be a JSON string or already an array)
+const rawPayload = $input.item.json.payload;
+
+// Parse the rawPayload if needed. If it's already an array (or a single object), use it.
+let parsedArray;
+if (typeof rawPayload === 'string') {
+  try {
+    parsedArray = JSON.parse(rawPayload);
+  } catch (e) {
+    throw new Error("Failed to parse payload string: " + e.message);
+  }
+} else if (Array.isArray(rawPayload)) {
+  parsedArray = rawPayload;
+} else {
+  parsedArray = [rawPayload];
+}
+
+// Filter for order notifications:
+// We'll keep only items where:
+//  • notif_info.tipo_objeto === "comprobantes"
+//  • data contains a defined cpr_id (the order identifier)
+const orders = parsedArray.filter(item => {
+  return item.notif_info && 
+         item.notif_info.tipo_objeto === "comprobantes" &&
+         item.data && 
+         item.data.cpr_id !== undefined;
+});
+
+// Attach the orders (even if it's an empty array) as a new field
+$input.item.json.orders = orders;
+
+// Always return an object
+return $input.item;
