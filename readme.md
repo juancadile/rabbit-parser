@@ -1,4 +1,4 @@
-```markdown
+
 # Diferencias entre v1 y v2
 
 Este README explica las diferencias clave entre la versión 1 (v1) y la versión 2 (v2) del código, para que quede claro cuál es la finalidad de cada versión y se pueda documentar adecuadamente en GitHub.
